@@ -110,15 +110,17 @@ use {
 
 ### Default Sound Mappings
 
-| Event | Sound File | Description |
-|-------|------------|-------------|
-| `yank` | `wololo.mp3` | When yanking text |
-| `insert_enter` | `villager-create.mp3` | Entering insert mode |
-| `visual_enter` | `villager-select.wav` | Entering visual mode |
-| `save` | `castle.mp3` | Saving a file |
-| `error` | `villager-killed.mp3` | When errors appear |
-| `buf_enter` | `campaign.mp3` | Opening a new buffer |
-| `quit` | `drumpapappa.mp3` | Exiting Neovim |
+| Event | Sound File | Description | Default |
+|-------|------------|-------------|---------|
+| `yank` | `wololo.mp3` | When yanking text | ✅ Enabled |
+| `insert_enter` | `villager-create.mp3` | Entering insert mode | ✅ Enabled |
+| `visual_enter` | `villager-select.wav` | Entering visual mode | ✅ Enabled |
+| `save` | `castle.mp3` | Saving a file | ✅ Enabled |
+| `error` | `villager-killed.mp3` | When errors appear | ✅ Enabled |
+| `quit` | `drumpapappa.mp3` | Exiting Neovim | ✅ Enabled |
+| `type` | `arrow.mp3` | Each character typed (archer attack) | ❌ Disabled (noisy) |
+| `delete` | `sword.mp3` | Deleting characters | ❌ Disabled (noisy) |
+| `buf_enter` | `campaign.mp3` | Opening a new buffer | ❌ Disabled (can be annoying) |
 
 ### Customizing Sound File Names
 
@@ -200,21 +202,29 @@ require("aoe-sounds").setup({
     visual_enter = true,
     save = true,
     error = true,
-    buf_enter = false, -- Disabled by default
+    buf_enter = false, -- Disabled by default (can be annoying)
     quit = true,
+    type = false, -- Disabled by default (very noisy, but fun!)
+    delete = false, -- Disabled by default (noisy)
   },
 })
 ```
 
-### Disable Specific Events
+### Enable/Disable Specific Events
 
-If you find certain sounds annoying:
+Some events are disabled by default because they can be noisy:
 
 ```lua
 require("aoe-sounds").setup({
+  sounds_dir = "~/.config/nvim/aoe-sounds",
   events = {
+    -- Enable the noisy but fun events
+    type = true,          -- Play arrow sound on each keystroke
+    delete = true,        -- Play sword sound when deleting
+    buf_enter = true,     -- Play sound when opening buffers
+
+    -- Disable events you find annoying
     insert_enter = false, -- Don't play sound when entering insert mode
-    buf_enter = false,    -- Don't play sound when opening buffers
   },
 })
 ```
@@ -228,6 +238,8 @@ require("aoe-sounds").setup({
 - **DiagnosticChanged** - When LSP errors appear
 - **BufReadPost** - When opening/reading a file
 - **VimLeavePre** - Before exiting Neovim
+- **InsertCharPre** - Before each character is inserted (typing sound)
+- **Key Mappings** - Custom mappings for `<BS>` and `<Del>` (deletion sound)
 
 ## 🐛 Troubleshooting
 
@@ -279,6 +291,34 @@ MIT
 
 - Age of Empires sounds are property of Microsoft/Ensemble Studios
 - Plugin inspired by the glorious "Wololo" monk conversion sound
+
+## 💡 Sound Suggestions
+
+Here are some other fun sound ideas you could implement:
+
+### Combat Sounds
+- **Archer attack** (`arrow.mp3`) - When typing each character (already implemented!)
+- **Sword/melee attack** (`sword.mp3`) - When deleting (already implemented!)
+- **Cavalry charge** - When using find/replace across file (`:s/`)
+- **Siege weapon** - When deleting large blocks of code
+
+### Building/Economy Sounds
+- **Building complete** - When LSP auto-formatting completes
+- **Resource collected** - When accepting autocomplete suggestions
+- **Trade complete** - When git operations succeed
+
+### Strategy Sounds
+- **Town bell** - When compiler warnings appear
+- **Trumpet fanfare** - When all tests pass
+- **Defeat sound** - When build fails
+- **Victory sound** - When successfully merging/deploying
+
+### Social Sounds
+- **Taunts** (11, 11, 11) - Custom command for fun
+- **"All hail, king of the losers"** - When closing without saving
+- **"Nice town, I'll take it"** - When opening a new project
+
+Want me to implement any of these? 🏹⚔️
 
 ## 🎊 Contributing
 
