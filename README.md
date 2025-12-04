@@ -40,16 +40,22 @@ sudo pacman -S ffmpeg
 
 ### With LazyVim / lazy.nvim
 
-Add to your `~/.config/nvim/lua/plugins/aoe-sounds.lua`:
+**Important:** You need to specify a custom sounds directory since plugin managers don't expose the plugin's internal directory structure.
+
+1. Create a directory for your sounds (e.g., `~/.config/nvim/aoe-sounds/`)
+2. Add your AoE sound files to this directory
+3. Add to your `~/.config/nvim/lua/plugins/aoe-sounds.lua`:
 
 ```lua
 return {
   "taflmaster/wololo",
   config = function()
     require("aoe-sounds").setup({
+      -- REQUIRED: Specify where your sound files are located
+      sounds_dir = "~/.config/nvim/aoe-sounds",
+
       -- Optional: customize configuration
       enabled = true,
-      sounds_dir = nil, -- defaults to plugin's sounds directory
       events = {
         yank = true,
         insert_enter = true,
@@ -71,7 +77,9 @@ return {
 Plug 'taflmaster/wololo'
 
 lua << EOF
-require("aoe-sounds").setup()
+require("aoe-sounds").setup({
+  sounds_dir = "~/.config/nvim/aoe-sounds",
+})
 EOF
 ```
 
@@ -80,14 +88,25 @@ EOF
 use {
   'taflmaster/wololo',
   config = function()
-    require("aoe-sounds").setup()
+    require("aoe-sounds").setup({
+      sounds_dir = "~/.config/nvim/aoe-sounds",
+    })
   end
 }
 ```
 
 ## 🎵 Sound Files
 
-Place your Age of Empires sound files in the `sounds/` directory of the plugin, or specify a custom directory in the config.
+### Setting Up Your Sounds Directory
+
+1. **Create a directory** for your sound files:
+   ```bash
+   mkdir -p ~/.config/nvim/aoe-sounds
+   ```
+
+2. **Download or copy** your Age of Empires sound files to this directory
+
+3. **Configure the plugin** to point to this directory (see Installation section above)
 
 ### Default Sound Mappings
 
@@ -101,13 +120,13 @@ Place your Age of Empires sound files in the `sounds/` directory of the plugin, 
 | `buf_enter` | `campaign.mp3` | Opening a new buffer |
 | `quit` | `drumpapappa.mp3` | Exiting Neovim |
 
-### Adding Your Sounds
+### Customizing Sound File Names
 
-1. Copy your AoE sound files to the plugin's `sounds/` directory
-2. Rename them to match the default names, or update the config:
+If your sound files have different names than the defaults, update the config:
 
 ```lua
 require("aoe-sounds").setup({
+  sounds_dir = "~/.config/nvim/aoe-sounds",
   sounds = {
     yank = "aoe2-30-wololo.mp3",
     insert_enter = "Voicy_Villager creation SFX.mp3",
@@ -120,11 +139,17 @@ require("aoe-sounds").setup({
 })
 ```
 
-### Using a Custom Sounds Directory
+### Alternative Sounds Directory Location
+
+You can use any directory you prefer:
+
+```bash
+mkdir -p ~/aoe-sounds
+```
 
 ```lua
 require("aoe-sounds").setup({
-  sounds_dir = "~/my-sounds/aoe",
+  sounds_dir = "~/aoe-sounds",
 })
 ```
 
@@ -153,10 +178,11 @@ require("aoe-sounds").setup({
   -- Enable/disable the plugin
   enabled = true,
 
-  -- Custom sounds directory (optional)
-  sounds_dir = nil,
+  -- REQUIRED: Custom sounds directory
+  -- This is where you store your sound files
+  sounds_dir = "~/.config/nvim/aoe-sounds",
 
-  -- Sound file mappings
+  -- Sound file mappings (filenames in your sounds_dir)
   sounds = {
     yank = "wololo.mp3",
     insert_enter = "villager-create.mp3",
@@ -207,17 +233,43 @@ require("aoe-sounds").setup({
 
 ### No sound playing
 
-1. Check if an audio player is installed: `which ffplay mpv paplay afplay`
-2. Test playing a sound manually: `ffplay -nodisp -autoexit sounds/wololo.mp3`
-3. Check if sound files exist in the `sounds/` directory
-4. Ensure the plugin is enabled: `:lua print(require("aoe-sounds").get_config().enabled)`
+1. **Check if an audio player is installed:**
+   ```bash
+   which ffplay mpv paplay afplay
+   ```
+   If none are found, install one: `sudo apt install ffmpeg`
 
-### Sounds not found
+2. **Verify your sounds directory exists:**
+   ```bash
+   ls -la ~/.config/nvim/aoe-sounds
+   ```
+   If it doesn't exist, create it: `mkdir -p ~/.config/nvim/aoe-sounds`
 
-Make sure your sound files are in the correct directory. Check with:
-```vim
-:lua print(vim.inspect(require("aoe-sounds").get_config()))
-```
+3. **Test playing a sound manually:**
+   ```bash
+   ffplay -nodisp -autoexit ~/.config/nvim/aoe-sounds/wololo.mp3
+   ```
+
+4. **Check the plugin configuration:**
+   ```vim
+   :lua print(vim.inspect(require("aoe-sounds").get_config()))
+   ```
+   Verify that `sounds_dir` points to the correct location.
+
+5. **Check Neovim messages for warnings:**
+   ```vim
+   :messages
+   ```
+   The plugin will warn you if the sounds directory or files are not found.
+
+### Sounds directory not found error
+
+If you see a warning about the sounds directory not being found:
+
+1. Make sure you've set `sounds_dir` in your config
+2. Create the directory: `mkdir -p ~/.config/nvim/aoe-sounds`
+3. Add your sound files to that directory
+4. Restart Neovim
 
 ## 📝 License
 
