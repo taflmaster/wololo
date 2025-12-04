@@ -6,6 +6,8 @@ local default_config = {
   enabled = true,
   sounds_dir = nil, -- Will be set to plugin root/sounds by default
   volume = 1.0,
+  -- Sound mappings: can be a single file (string) or multiple files (array) for random selection
+  -- Example: type = "arrow.mp3" or type = {"arrow1.mp3", "arrow2.mp3", "arrow3.mp3"}
   sounds = {
     yank = "wololo.mp3",
     insert_enter = "villager-create.mp3",
@@ -14,8 +16,8 @@ local default_config = {
     error = "villager-killed.mp3",
     buf_enter = "campaign.mp3",
     quit = "drumpapappa.mp3",
-    type = "arrow.mp3",
-    delete = "sword.mp3",
+    type = "arrow.mp3", -- Can be an array for random sounds: {"arrow.mp3", "arrow2.mp3"}
+    delete = "sword.mp3", -- Can be an array for random sounds: {"sword.mp3", "sword2.mp3"}
   },
   -- Events to enable (can be disabled individually)
   events = {
@@ -82,7 +84,18 @@ local function play_sound(event_name)
 
   local sound_file = config.sounds[event_name]
   if sound_file then
-    local full_path = get_sound_path(sound_file)
+    -- Support both single sound file (string) and multiple sound files (array)
+    local selected_sound
+    if type(sound_file) == "table" then
+      -- Randomly select one sound from the array
+      math.randomseed(os.time() + vim.loop.hrtime())
+      selected_sound = sound_file[math.random(#sound_file)]
+    else
+      -- Single sound file
+      selected_sound = sound_file
+    end
+
+    local full_path = get_sound_path(selected_sound)
     player.play(full_path)
   end
 end
