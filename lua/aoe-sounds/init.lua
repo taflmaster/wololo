@@ -215,13 +215,17 @@ local function setup_autocommands()
     -- Map backspace and delete keys to play sound
     vim.keymap.set("i", "<BS>", function()
       play_sound("delete")
-      return "<BS>"
-    end, { expr = true, noremap = true, desc = "AoE: Delete with sword sound" })
+      -- Use vim.api.nvim_feedkeys to properly send the key
+      local key = vim.api.nvim_replace_termcodes("<BS>", true, false, true)
+      vim.api.nvim_feedkeys(key, "n", false)
+    end, { noremap = true, desc = "AoE: Delete with sword sound" })
 
     vim.keymap.set("i", "<Del>", function()
       play_sound("delete")
-      return "<Del>"
-    end, { expr = true, noremap = true, desc = "AoE: Delete with sword sound" })
+      -- Use vim.api.nvim_feedkeys to properly send the key
+      local key = vim.api.nvim_replace_termcodes("<Del>", true, false, true)
+      vim.api.nvim_feedkeys(key, "n", false)
+    end, { noremap = true, desc = "AoE: Delete with sword sound" })
   end
 end
 

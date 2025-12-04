@@ -55,9 +55,12 @@ function M.play(sound_file)
     return
   end
 
-  -- Play sound in background
-  local cmd = string.format("%s %s %s &", player.cmd, player.args, vim.fn.shellescape(sound_file))
-  vim.fn.system(cmd)
+  -- Play sound in background using jobstart for true async execution
+  local cmd = string.format("%s %s %s", player.cmd, player.args, vim.fn.shellescape(sound_file))
+  vim.fn.jobstart(cmd, {
+    detach = true,
+    on_exit = function() end,
+  })
 end
 
 return M
