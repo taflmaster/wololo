@@ -5,6 +5,7 @@ A Neovim plugin that plays Age of Empires sound effects when you perform common 
 ## ✨ Features
 
 - 🎵 Plays AoE sounds on various Neovim events
+- 🎲 Random sound selection - provide multiple sounds per event for variety!
 - ⚙️ Fully configurable sound mappings
 - 🎛️ Enable/disable individual events
 - 🔇 Easy toggle on/off
@@ -140,6 +141,45 @@ require("aoe-sounds").setup({
   },
 })
 ```
+
+### Random Sound Effects for Frequent Events
+
+For actions that happen frequently (like typing and deleting), you can provide multiple sound files and the plugin will randomly select one each time the event occurs. This adds variety and makes repetitive actions more interesting!
+
+Simply provide an array of sound file names instead of a single string:
+
+```lua
+require("aoe-sounds").setup({
+  sounds_dir = "~/.config/nvim/aoe-sounds",
+  sounds = {
+    -- Single sound (traditional way)
+    yank = "wololo.mp3",
+
+    -- Multiple sounds - randomly selected!
+    type = {
+      "arrow1.mp3",
+      "arrow2.mp3",
+      "arrow3.mp3",
+      "bow-release.mp3",
+    },
+    delete = {
+      "sword1.mp3",
+      "sword2.mp3",
+      "blade-swing.mp3",
+    },
+  },
+  events = {
+    type = true,   -- Enable typing sounds
+    delete = true, -- Enable deletion sounds
+  },
+})
+```
+
+**Benefits of random sounds:**
+- Reduces repetition fatigue for frequently occurring events
+- Makes typing and deletion more dynamic and engaging
+- Perfect for `type`, `delete`, and other high-frequency events
+- Backward compatible - single strings still work perfectly
 
 ### Alternative Sounds Directory Location
 
