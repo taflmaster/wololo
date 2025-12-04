@@ -14,6 +14,8 @@ local default_config = {
     error = "villager-killed.mp3",
     buf_enter = "campaign.mp3",
     quit = "drumpapappa.mp3",
+    type = "arrow.mp3",
+    delete = "sword.mp3",
   },
   -- Events to enable (can be disabled individually)
   events = {
@@ -24,6 +26,8 @@ local default_config = {
     error = true,
     buf_enter = false, -- Disabled by default (can be annoying)
     quit = true,
+    type = false, -- Disabled by default (very noisy)
+    delete = false, -- Disabled by default (noisy)
   },
 }
 
@@ -159,6 +163,30 @@ local function setup_autocommands()
         play_sound("quit")
       end,
     })
+  end
+
+  -- Typing (arrow sound for each character typed)
+  if config.events.type then
+    vim.api.nvim_create_autocmd("InsertCharPre", {
+      group = augroup,
+      callback = function()
+        play_sound("type")
+      end,
+    })
+  end
+
+  -- Deletion (sword sound when deleting characters)
+  if config.events.delete then
+    -- Map backspace and delete keys to play sound
+    vim.keymap.set("i", "<BS>", function()
+      play_sound("delete")
+      return "<BS>"
+    end, { expr = true, noremap = true, desc = "AoE: Delete with sword sound" })
+
+    vim.keymap.set("i", "<Del>", function()
+      play_sound("delete")
+      return "<Del>"
+    end, { expr = true, noremap = true, desc = "AoE: Delete with sword sound" })
   end
 end
 
