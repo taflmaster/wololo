@@ -224,7 +224,11 @@ require("aoe-sounds").setup({
   -- This is where you store your sound files
   sounds_dir = "~/.config/nvim/aoe-sounds",
 
+  -- Enable debug messages (helpful for troubleshooting)
+  debug = false,
+
   -- Sound file mappings (filenames in your sounds_dir)
+  -- Can be a single string or an array for random selection
   sounds = {
     yank = "wololo.mp3",
     insert_enter = "villager-create.mp3",
@@ -233,6 +237,9 @@ require("aoe-sounds").setup({
     error = "villager-killed.mp3",
     buf_enter = "campaign.mp3",
     quit = "drumpapappa.mp3",
+    -- Examples of array usage for random sounds:
+    -- type = {"arrow1.mp3", "arrow2.mp3", "arrow3.mp3"},
+    -- delete = {"sword1.mp3", "sword2.mp3"},
   },
 
   -- Enable/disable individual events
@@ -285,34 +292,92 @@ require("aoe-sounds").setup({
 
 ### No sound playing
 
-1. **Check if an audio player is installed:**
+1. **Enable debug mode to see what's happening:**
+   ```lua
+   require("aoe-sounds").setup({
+     sounds_dir = "~/.config/nvim/aoe-sounds",
+     debug = true,  -- Enable debug messages
+     events = {
+       type = true,
+       delete = true,
+     },
+   })
+   ```
+   Debug mode will show you which sounds are being selected and played.
+
+2. **Check if an audio player is installed:**
    ```bash
    which ffplay mpv paplay afplay
    ```
    If none are found, install one: `sudo apt install ffmpeg`
 
-2. **Verify your sounds directory exists:**
+3. **Verify your sounds directory exists:**
    ```bash
    ls -la ~/.config/nvim/aoe-sounds
    ```
    If it doesn't exist, create it: `mkdir -p ~/.config/nvim/aoe-sounds`
 
-3. **Test playing a sound manually:**
+4. **Verify your sound files exist:**
+   ```bash
+   ls -la ~/.config/nvim/aoe-sounds/*.mp3
+   ```
+   Make sure the filenames in your config match the actual files.
+
+5. **Test playing a sound manually:**
    ```bash
    ffplay -nodisp -autoexit ~/.config/nvim/aoe-sounds/wololo.mp3
    ```
 
-4. **Check the plugin configuration:**
+6. **Check the plugin configuration:**
    ```vim
    :lua print(vim.inspect(require("aoe-sounds").get_config()))
    ```
    Verify that `sounds_dir` points to the correct location.
 
-5. **Check Neovim messages for warnings:**
+7. **Check Neovim messages for warnings:**
    ```vim
    :messages
    ```
    The plugin will warn you if the sounds directory or files are not found.
+
+### Random sounds (arrays) not working
+
+If you're using arrays for random sound selection but not hearing anything:
+
+1. **Make sure the events are enabled:**
+   ```lua
+   events = {
+     type = true,    -- Must be true!
+     delete = true,  -- Must be true!
+   }
+   ```
+   Note: `type` and `delete` are disabled by default.
+
+2. **Verify all sound files in the array exist:**
+   ```lua
+   sounds = {
+     type = {
+       "arrow1.mp3",  -- This file must exist
+       "arrow2.mp3",  -- This file must exist
+       "arrow3.mp3",  -- This file must exist
+     },
+   }
+   ```
+
+3. **Enable debug mode** to see which sound is being selected:
+   ```lua
+   require("aoe-sounds").setup({
+     debug = true,
+     -- ... rest of config
+   })
+   ```
+
+4. **Test with a single sound first** to ensure the basic functionality works:
+   ```lua
+   sounds = {
+     type = "arrow.mp3",  -- Try single file first
+   }
+   ```
 
 ### Sounds directory not found error
 
