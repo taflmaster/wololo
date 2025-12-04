@@ -1,0 +1,14 @@
+# Sound files (users add their own)
+sounds/*.mp3
+sounds/*.wav
+sounds/*.ogg
+sounds/*.flac
+
+# But keep the README
+!sounds/README.md
+
+# Neovim/Lua
+*.swp
+*.swo
+*~
+.DS_Store
