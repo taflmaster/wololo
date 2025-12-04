@@ -116,7 +116,7 @@ local function play_sound(event_name)
     end
 
     local full_path = get_sound_path(selected_sound)
-    player.play(full_path)
+    player.play(full_path, config.debug)
   elseif config.debug then
     vim.notify(string.format("AoE Sounds: No sound configured for event '%s'", event_name), vim.log.levels.WARN)
   end
@@ -212,8 +212,15 @@ local function setup_autocommands()
 
   -- Deletion (sword sound when deleting characters)
   if config.events.delete then
+    if config.debug then
+      vim.notify("AoE Sounds: Setting up delete keymaps for <BS> and <Del>", vim.log.levels.INFO)
+    end
+
     -- Map backspace and delete keys to play sound
     vim.keymap.set("i", "<BS>", function()
+      if config.debug then
+        vim.notify("AoE Sounds: <BS> keymap triggered!", vim.log.levels.INFO)
+      end
       play_sound("delete")
       -- Use vim.api.nvim_feedkeys to properly send the key
       local key = vim.api.nvim_replace_termcodes("<BS>", true, false, true)
@@ -221,6 +228,9 @@ local function setup_autocommands()
     end, { noremap = true, desc = "AoE: Delete with sword sound" })
 
     vim.keymap.set("i", "<Del>", function()
+      if config.debug then
+        vim.notify("AoE Sounds: <Del> keymap triggered!", vim.log.levels.INFO)
+      end
       play_sound("delete")
       -- Use vim.api.nvim_feedkeys to properly send the key
       local key = vim.api.nvim_replace_termcodes("<Del>", true, false, true)
@@ -236,6 +246,13 @@ function M.setup(user_config)
 
   -- Initialize sounds path
   init_sounds_path()
+
+  -- Show audio player info in debug mode
+  if config.debug then
+    local player_name = player.get_player_name()
+    vim.notify(string.format("AoE Sounds: Initialized with audio player: %s", player_name), vim.log.levels.INFO)
+    vim.notify(string.format("AoE Sounds: Sounds directory: %s", sounds_path or "not set"), vim.log.levels.INFO)
+  end
 
   -- Setup autocommands
   setup_autocommands()

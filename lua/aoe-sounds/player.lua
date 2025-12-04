@@ -26,8 +26,14 @@ local function find_audio_player()
   return nil
 end
 
+-- Get the current audio player name
+function M.get_player_name()
+  local player = find_audio_player()
+  return player and player.cmd or "none"
+end
+
 -- Play a sound file
-function M.play(sound_file)
+function M.play(sound_file, debug)
   local player = find_audio_player()
 
   if not player then
@@ -37,6 +43,10 @@ function M.play(sound_file)
       M.warned_player = true
     end
     return
+  end
+
+  if debug then
+    vim.notify(string.format("AoE Sounds: Using player '%s' for: %s", player.cmd, sound_file), vim.log.levels.DEBUG)
   end
 
   -- Check if file exists
