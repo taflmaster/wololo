@@ -1,11 +1,15 @@
 local M = {}
 local player = require("aoe-sounds.player")
 
+-- Initialize random seed once at module load
+math.randomseed(os.time())
+
 -- Default configuration
 local default_config = {
   enabled = true,
   sounds_dir = nil, -- Will be set to plugin root/sounds by default
   volume = 1.0,
+  debug = false, -- Enable debug messages to troubleshoot sound issues
   -- Sound mappings: can be a single file (string) or multiple files (array) for random selection
   -- Example: type = "arrow.mp3" or type = {"arrow1.mp3", "arrow2.mp3", "arrow3.mp3"}
   sounds = {
@@ -75,10 +79,16 @@ end
 -- Play a sound by event name
 local function play_sound(event_name)
   if not config.enabled then
+    if config.debug then
+      vim.notify(string.format("AoE Sounds: Plugin disabled, skipping event '%s'", event_name), vim.log.levels.DEBUG)
+    end
     return
   end
 
   if not config.events[event_name] then
+    if config.debug then
+      vim.notify(string.format("AoE Sounds: Event '%s' is disabled in config", event_name), vim.log.levels.DEBUG)
+    end
     return
   end
 
@@ -88,15 +98,27 @@ local function play_sound(event_name)
     local selected_sound
     if type(sound_file) == "table" then
       -- Randomly select one sound from the array
-      math.randomseed(os.time() + vim.loop.hrtime())
-      selected_sound = sound_file[math.random(#sound_file)]
+      local index = math.random(#sound_file)
+      selected_sound = sound_file[index]
+      if config.debug then
+        vim.notify(
+          string.format("AoE Sounds: Event '%s' - selected sound %d/%d: %s",
+            event_name, index, #sound_file, selected_sound),
+          vim.log.levels.INFO
+        )
+      end
     else
       -- Single sound file
       selected_sound = sound_file
+      if config.debug then
+        vim.notify(string.format("AoE Sounds: Event '%s' - playing: %s", event_name, selected_sound), vim.log.levels.INFO)
+      end
     end
 
     local full_path = get_sound_path(selected_sound)
     player.play(full_path)
+  elseif config.debug then
+    vim.notify(string.format("AoE Sounds: No sound configured for event '%s'", event_name), vim.log.levels.WARN)
   end
 end
 
