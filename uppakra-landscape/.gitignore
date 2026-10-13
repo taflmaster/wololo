@@ -1,0 +1,13 @@
+# Raw downloads and derived rasters stay out of git
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+outputs/candidates/screenshots/
+*.aux.xml
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+qgis/*.qgz~
+outputs/routes/*.tif
